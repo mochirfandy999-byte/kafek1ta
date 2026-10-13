@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Data Transaksi - CafeKita</title>
+    <title>Data Pemesanan - CafeKita</title>
 
     {{-- Bootstrap 5 --}}
     <link
@@ -563,19 +563,25 @@
             </li>
 
         @endif
+{{-- Data Menu (TAMBAHKAN DI SINI - Hanya Kasir) --}}
+    @if(auth()->user()->role === 'kasir')
+        <a href="{{ route('menus.index') }}" class="{{ request()->routeIs('menus.*') ? 'active' : '' }}">
+            <i class="bi bi-journal-text"></i>
+            <span>Data Menu</span>
+        </a>
+    @endif
 
-
-        {{-- TRANSAKSI --}}
+        {{-- PEMESANAN --}}
         @if(in_array(auth()->user()->role, ['kasir', 'staff_dapur', 'manager']))
 
             <li>
 
-                <a href="{{ route('transaksis.index') }}"
-                   class="{{ request()->routeIs('transaksis.*') ? 'active' : '' }}">
+                <a href="{{ route('pemesanans.index') }}"
+                   class="{{ request()->routeIs('pemesanans.*') ? 'active' : '' }}">
 
                     <i class="bi bi-receipt-cutoff"></i>
 
-                    <span>Transaksi</span>
+                    <span>Pemesanan</span>
 
                 </a>
 
@@ -691,22 +697,22 @@
             <div>
 
                 <h2 class="page-title">
-                    Data Transaksi
+                    Data Pemesanan
                 </h2>
 
                 <p class="page-subtitle">
-                    Kelola seluruh transaksi pelanggan CafeKita
+                    Kelola seluruh pemesanan pelanggan CafeKita
                 </p>
 
             </div>
 
 
-            <a href="{{ route('transaksis.create') }}"
+            <a href="{{ route('pemesanans.create') }}"
                class="btn btn-cafe">
 
                 <i class="bi bi-plus-lg me-1"></i>
 
-                Transaksi Baru
+                Pemesanan Baru
 
             </a>
 
@@ -760,7 +766,7 @@
         <div class="row g-3 mb-4">
 
 
-            {{-- TOTAL --}}
+            {{-- TOTAL PEMESANAN --}}
             <div class="col-xl-3 col-md-6">
 
                 <div class="stat-card">
@@ -775,13 +781,13 @@
 
                         <div class="stat-number">
 
-                            {{ $transaksis->count() }}
+                            {{ $pemesanans->count() }}
 
                         </div>
 
                         <div class="stat-label">
 
-                            Total Transaksi
+                            Total Pemesanan
 
                         </div>
 
@@ -792,7 +798,7 @@
             </div>
 
 
-            {{-- PENDING --}}
+            {{-- PEMESANAN PENDING --}}
             <div class="col-xl-3 col-md-6">
 
                 <div class="stat-card">
@@ -807,13 +813,13 @@
 
                         <div class="stat-number text-warning">
 
-                            {{ $transaksis->where('status', 'pending')->count() }}
+                            {{ $pemesanans->where('status', 'pending')->count() }}
 
                         </div>
 
                         <div class="stat-label">
 
-                            Transaksi Pending
+                            Pemesanan Pending
 
                         </div>
 
@@ -824,7 +830,7 @@
             </div>
 
 
-            {{-- SELESAI --}}
+            {{-- PEMESANAN SELESAI --}}
             <div class="col-xl-3 col-md-6">
 
                 <div class="stat-card">
@@ -839,13 +845,13 @@
 
                         <div class="stat-number text-success">
 
-                            {{ $transaksis->where('status', 'selesai')->count() }}
+                            {{ $pemesanans->where('status', 'selesai')->count() }}
 
                         </div>
 
                         <div class="stat-label">
 
-                            Transaksi Selesai
+                            Pemesanan Selesai
 
                         </div>
 
@@ -872,7 +878,7 @@
                         <div class="stat-number"
                              style="font-size:20px;">
 
-                            Rp {{ number_format($transaksis->where('status', 'selesai')->sum('total_bayar'), 0, ',', '.') }}
+                            Rp {{ number_format($pemesanans->where('status', 'selesai')->sum('total_bayar'), 0, ',', '.') }}
 
                         </div>
 
@@ -892,7 +898,7 @@
 
 
         {{-- =================================================
-             TABEL TRANSAKSI
+             TABEL PEMESANAN
         ================================================== --}}
 
         <div class="table-card">
@@ -907,13 +913,13 @@
 
                         <i class="bi bi-list-ul me-2"></i>
 
-                        Daftar Transaksi
+                        Daftar Pemesanan
 
                     </h5>
 
                     <div class="table-card-subtitle">
 
-                        Data transaksi pelanggan CafeKita
+                        Data pemesanan pelanggan CafeKita
 
                     </div>
 
@@ -922,7 +928,7 @@
                 <span class="badge rounded-pill"
                       style="background:#edf3ee; color:#304e3a;">
 
-                    {{ $transaksis->count() }} Data
+                    {{ $pemesanans->count() }} Data
 
                 </span>
 
@@ -942,7 +948,7 @@
 
                             <th>No</th>
 
-                            <th>No. Transaksi</th>
+                            <th>No. Pemesanan</th>
 
                             <th>Pelanggan</th>
 
@@ -966,7 +972,7 @@
                         <tbody>
 
 
-                        @forelse($transaksis as $index => $transaksi)
+                        @forelse($pemesanans as $index => $pemesanan)
 
                             <tr>
 
@@ -983,12 +989,12 @@
                                 </td>
 
 
-                                {{-- NOMOR TRANSAKSI --}}
+                                {{-- NOMOR PEMESANAN --}}
                                 <td>
 
                                     <div class="transaction-number">
 
-                                        {{ $transaksi->nomor_transaksi }}
+                                        {{ $pemesanan->nomor_transaksi }}
 
                                     </div>
 
@@ -1000,7 +1006,7 @@
 
                                     <div class="fw-semibold">
 
-                                        {{ $transaksi->nama_pelanggan }}
+                                        {{ $pemesanan->nama_pelanggan }}
 
                                     </div>
 
@@ -1010,14 +1016,14 @@
                                 {{-- MEJA --}}
                                 <td>
 
-                                    @if($transaksi->meja)
+                                    @if($pemesanan->meja)
 
                                         <span class="badge rounded-pill"
                                               style="background:#edf3ee; color:#304e3a;">
 
                                             <i class="bi bi-grid-3x3-gap me-1"></i>
 
-                                            {{ $transaksi->meja->nomor_meja }}
+                                            {{ $pemesanan->meja->nomor_meja }}
 
                                         </span>
 
@@ -1028,12 +1034,11 @@
                                     @endif
 
                                 </td>
-
-
+                    
                                 {{-- KASIR --}}
                                 <td>
 
-                                    @if($transaksi->user)
+                                    @if($pemesanan->user)
 
                                         <div class="d-flex align-items-center gap-2">
 
@@ -1055,7 +1060,7 @@
 
                                             <span>
 
-                                                {{ $transaksi->user->nama }}
+                                                {{ $pemesanan->user->nama }}
 
                                             </span>
 
@@ -1075,7 +1080,7 @@
 
                                     <span class="total-bayar">
 
-                                        Rp {{ number_format($transaksi->total_bayar, 0, ',', '.') }}
+                                        Rp {{ number_format($pemesanan->total_bayar, 0, ',', '.') }}
 
                                     </span>
 
@@ -1085,7 +1090,7 @@
                                 {{-- STATUS --}}
                                 <td>
 
-                                    @if($transaksi->status === 'selesai')
+                                    @if($pemesanan->status === 'selesai')
 
                                         <span class="status-badge bg-success-subtle text-success">
 
@@ -1096,7 +1101,7 @@
                                         </span>
 
 
-                                    @elseif($transaksi->status === 'batal')
+                                    @elseif($pemesanan->status === 'batal')
 
                                         <span class="status-badge bg-danger-subtle text-danger">
 
@@ -1107,7 +1112,7 @@
                                         </span>
 
 
-                                    @elseif($transaksi->status === 'diproses')
+                                    @elseif($pemesanan->status === 'diproses')
 
                                         <span class="status-badge bg-primary-subtle text-primary">
 
@@ -1141,9 +1146,9 @@
 
                                         {{-- EDIT --}}
                                         <a
-                                            href="{{ route('transaksis.edit', $transaksi->id) }}"
+                                            href="{{ route('pemesanans.edit', $pemesanan->id) }}"
                                             class="btn-action btn-edit"
-                                            title="Edit Transaksi">
+                                            title="Edit Pemesanan">
 
                                             <i class="bi bi-pencil-fill"></i>
 
@@ -1152,10 +1157,10 @@
 
                                         {{-- HAPUS --}}
                                         <form
-                                            action="{{ route('transaksis.destroy', $transaksi->id) }}"
+                                            action="{{ route('pemesanans.destroy', $pemesanan->id) }}"
                                             method="POST"
                                             class="d-inline"
-                                            onsubmit="return confirm('Yakin ingin menghapus transaksi ini?')">
+                                            onsubmit="return confirm('Yakin ingin menghapus pemesanan ini?')">
 
                                             @csrf
 
@@ -1164,7 +1169,7 @@
                                             <button
                                                 type="submit"
                                                 class="btn-action btn-delete"
-                                                title="Hapus Transaksi">
+                                                title="Hapus Pemesanan">
 
                                                 <i class="bi bi-trash-fill"></i>
 
@@ -1198,23 +1203,23 @@
 
                                         <h6 class="fw-bold">
 
-                                            Belum Ada Transaksi
+                                            Belum Ada Pemesanan
 
                                         </h6>
 
                                         <p class="text-muted small mb-3">
 
-                                            Belum terdapat data transaksi CafeKita.
+                                            Belum terdapat data pemesanan CafeKita.
 
                                         </p>
 
                                         <a
-                                            href="{{ route('transaksis.create') }}"
+                                            href="{{ route('pemesanans.create') }}"
                                             class="btn btn-cafe btn-sm">
 
                                             <i class="bi bi-plus-lg me-1"></i>
 
-                                            Tambah Transaksi
+                                            Tambah Pemesanan
 
                                         </a>
 

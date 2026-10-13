@@ -107,57 +107,68 @@
 
     <div class="menu-title">Menu Utama</div>
 
-    <ul class="sidebar-menu">
+<ul class="sidebar-menu">
 
+    {{-- Dashboard (Semua Role) --}}
+    <li>
+        <a href="{{ route('dashboard') }}"
+           class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+
+    {{-- Data Meja (Hanya Kasir) --}}
+    @if(auth()->user()->role === 'kasir')
         <li>
-            <a href="{{ route('dashboard') }}"
-               class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                <i class="bi bi-grid-1x2-fill"></i>
-                <span>Dashboard</span>
+            <a href="{{ route('mejas.index') }}"
+               class="{{ request()->routeIs('mejas.*') ? 'active' : '' }}">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+                <span>Data Meja</span>
             </a>
         </li>
+    @endif
+{{-- Data Menu (Hanya Kasir) --}}
+@if(auth()->user()->role === 'kasir')
+    <a href="{{ route('menus.index') }}" class="{{ request()->routeIs('menus.*') ? 'active' : '' }}">
+        <i class="bi bi-journal-text"></i>
+        <span>Data Menu</span>
+    </a>
+@endif
+    {{-- Pemesanan (Kasir & Staf Dapur) --}}
+    @if(in_array(auth()->user()->role, ['kasir', 'staff_dapur']))
+        <li>
+            <a href="{{ route('pemesanans.index') }}"
+               class="{{ request()->routeIs('pemesanans.*') ? 'active' : '' }}">
+                <i class="bi bi-receipt-cutoff"></i>
+                <span>Pemesanan</span>
+            </a>
+        </li>
+    @endif
 
-        @if(in_array(auth()->user()->role,['kasir','manager']))
-            <li>
-                <a href="{{ route('mejas.index') }}"
-                   class="{{ request()->routeIs('mejas.*') ? 'active' : '' }}">
-                    <i class="bi bi-grid-3x3-gap-fill"></i>
-                    <span>Data Meja</span>
-                </a>
-            </li>
-        @endif
+    {{-- Reservasi (Hanya Kasir) --}}
+    @if(auth()->user()->role === 'kasir')
+        <li>
+            <a href="{{ route('reservasis.index') }}"
+               class="{{ request()->routeIs('reservasis.*') ? 'active' : '' }}">
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Reservasi</span>
+            </a>
+        </li>
+    @endif
 
-        @if(in_array(auth()->user()->role,['kasir','staff_dapur','manager']))
-            <li>
-                <a href="{{ route('transaksis.index') }}"
-                   class="{{ request()->routeIs('transaksis.*') ? 'active' : '' }}">
-                    <i class="bi bi-receipt-cutoff"></i>
-                    <span>Transaksi</span>
-                </a>
-            </li>
-        @endif
+    {{-- Laporan (Khusus Manager) --}}
+    @if(auth()->user()->role === 'manager')
+        <li>
+            <a href="{{ route('laporan.index') }}"
+               class="{{ request()->routeIs('laporan.*') ? 'active' : '' }}">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Laporan</span>
+            </a>
+        </li>
+    @endif
 
-        @if(in_array(auth()->user()->role,['kasir','manager']))
-            <li>
-                <a href="{{ route('reservasis.index') }}"
-                   class="{{ request()->routeIs('reservasis.*') ? 'active' : '' }}">
-                    <i class="bi bi-calendar-check-fill"></i>
-                    <span>Reservasi</span>
-                </a>
-            </li>
-        @endif
-
-        @if(auth()->user()->role === 'manager')
-            <li>
-                <a href="{{ route('laporan.index') }}"
-                   class="{{ request()->routeIs('laporan.*') ? 'active' : '' }}">
-                    <i class="bi bi-bar-chart-fill"></i>
-                    <span>Laporan</span>
-                </a>
-            </li>
-        @endif
-
-    </ul>
+</ul>
 
     <div class="sidebar-bottom">
         <form action="{{ route('logout') }}" method="POST">
@@ -278,11 +289,11 @@
                         </div>
 
                         <div class="stat-number">
-                            {{ $jumlahTransaksi }}
+                            {{ $jumlahPemesanan }}
                         </div>
 
                         <div class="stat-label">
-                            Jumlah Transaksi
+                            Jumlah Pemesanan
                         </div>
 
                     </div>
@@ -355,7 +366,7 @@
         </div>
 
 
-        {{-- LAPORAN TRANSAKSI --}}
+        {{-- LAPORAN PEMESANAN --}}
         <div class="table-card mb-4">
 
             <div class="table-card-header">
@@ -363,17 +374,17 @@
                 <div>
                     <h5 class="table-card-title">
                         <i class="bi bi-receipt me-2"></i>
-                        Laporan Transaksi
+                        Laporan Pemesanan
                     </h5>
 
                     <div class="table-card-subtitle">
-                        Data transaksi CafeKita
+                        Data pemesanan CafeKita
                     </div>
                 </div>
 
                 <span class="badge rounded-pill"
                       style="background:#edf3ee;color:#304e3a;">
-                    {{ $transaksis->count() }} Data
+                    {{ $pemesanans->count() }} Data
                 </span>
 
             </div>
@@ -400,24 +411,23 @@
 
                         <tbody>
 
-                        @forelse($transaksis as $transaksi)
+                       @forelse($pemesanans as $transaksi)
 
-                            <tr>
+    <tr>
 
-                                <td>{{ $loop->iteration }}</td>
+        <td>{{ $loop->iteration }}</td>
 
-                                <td>
-                                    <span class="number-green">
-                                        {{ $transaksi->nomor_transaksi }}
-                                    </span>
-                                </td>
+        <td>
+            <span class="number-green">
+                {{ $transaksi->nomor_transaksi ?? $transaksi->nomor_pemesanan ?? '-' }}
+            </span>
+        </td>
 
-                                <td>
-                                    <span class="fw-semibold">
-                                        {{ $transaksi->nama_pelanggan }}
-                                    </span>
-                                </td>
-
+        <td>
+            <span class="fw-semibold">
+                {{ $transaksi->nama_pelanggan }}
+            </span>
+        </td>
                                 <td>
                                     @if($transaksi->meja)
                                         <span class="badge rounded-pill"

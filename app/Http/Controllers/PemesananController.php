@@ -3,25 +3,25 @@
 namespace App\Http\Controllers;
 
 use App\Models\Meja;
-use App\Models\Transaksi;
+use App\Models\Pemesanan;
 use Illuminate\Http\Request;
 
-class TransaksiController extends Controller
+class PemesananController extends Controller
 {
     /**
-     * Menampilkan semua transaksi.
+     * Menampilkan semua pemesanan.
      */
     public function index()
     {
-        $transaksis = Transaksi::with(['user', 'meja'])
+        $pemesanans = Pemesanan::with(['user', 'meja'])
             ->latest()
             ->get();
 
-        return view('transaksis.index', compact('transaksis'));
+        return view('pemesanans.index', compact('pemesanans'));
     }
 
     /**
-     * Form tambah transaksi.
+     * Form tambah pemesanan.
      */
     public function create()
     {
@@ -29,11 +29,11 @@ class TransaksiController extends Controller
             ->orderBy('nomor_meja')
             ->get();
 
-        return view('transaksis.create', compact('mejas'));
+        return view('pemesanans.create', compact('mejas'));
     }
 
     /**
-     * Menyimpan transaksi.
+     * Menyimpan pemesanan.
      */
     public function store(Request $request)
     {
@@ -58,46 +58,46 @@ class TransaksiController extends Controller
                 ->with('error', 'Meja tersebut sudah tidak tersedia.');
         }
 
-        // Membuat nomor transaksi otomatis.
-        $nomorTransaksi = 'TRX-' . date('YmdHis') . '-' . random_int(100, 999);
+        // Membuat nomor pemesanan otomatis (prefix PMS atau ORD).
+        $nomorPemesanan = 'PMS-' . date('YmdHis') . '-' . random_int(100, 999);
 
-        Transaksi::create([
-            'nomor_transaksi' => $nomorTransaksi,
+        Pemesanan::create([
+            'nomor_transaksi' => $nomorPemesanan, // sesuaikan jika nama kolom di DB masih 'nomor_transaksi' atau sudah 'nomor_pemesanan'
             'user_id' => auth()->id(),
             'meja_id' => $validated['meja_id'],
             'nama_pelanggan' => $validated['nama_pelanggan'],
-            'tanggal_transaksi' => now(),
+            'tanggal_transaksi' => now(), // sesuaikan jika kolom di DB diubah ke tanggal_pemesanan
             'total_bayar' => $validated['total_bayar'],
             'status' => 'selesai',
         ]);
 
-        // Setelah transaksi dibuat, meja menjadi terisi.
+        // Setelah pemesanan dibuat, meja menjadi terisi.
         $meja->update([
             'status' => 'terisi',
         ]);
 
         return redirect()
-            ->route('transaksis.index')
-            ->with('success', 'Transaksi berhasil ditambahkan.');
+            ->route('pemesanans.index')
+            ->with('success', 'Pemesanan berhasil ditambahkan.');
     }
 
     /**
-     * Form edit transaksi.
+     * Form edit pemesanan.
      */
-    public function edit(Transaksi $transaksi)
+    public function edit(Pemesanan $pemesanan)
     {
         $mejas = Meja::orderBy('nomor_meja')->get();
 
-        return view('transaksis.edit', compact(
-            'transaksi',
+        return view('pemesanans.edit', compact(
+            'pemesanan',
             'mejas'
         ));
     }
 
     /**
-     * Update transaksi.
+     * Update pemesanan.
      */
-    public function update(Request $request, Transaksi $transaksi)
+    public function update(Request $request, Pemesanan $pemesanan)
     {
         $validated = $request->validate([
             'meja_id' => 'required|exists:mejas,id',
@@ -106,22 +106,22 @@ class TransaksiController extends Controller
             'status' => 'required|in:pending,selesai,batal',
         ]);
 
-        $transaksi->update($validated);
+        $pemesanan->update($validated);
 
         return redirect()
-            ->route('transaksis.index')
-            ->with('success', 'Transaksi berhasil diperbarui.');
+            ->route('pemesanans.index')
+            ->with('success', 'Pemesanan berhasil diperbarui.');
     }
 
     /**
-     * Hapus transaksi.
+     * Hapus pemesanan.
      */
-    public function destroy(Transaksi $transaksi)
+    public function destroy(Pemesanan $pemesanan)
     {
-        $transaksi->delete();
+        $pemesanan->delete();
 
         return redirect()
-            ->route('transaksis.index')
-            ->with('success', 'Transaksi berhasil dihapus.');
+            ->route('pemesanans.index')
+            ->with('success', 'Pemesanan berhasil dihapus.');
     }
 }

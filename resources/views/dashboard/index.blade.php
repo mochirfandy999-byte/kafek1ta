@@ -615,7 +615,7 @@
 
         <div class="sidebar-menu">
 
-            {{-- Dashboard --}}
+            {{-- Dashboard (Semua Role) --}}
             <a
                 href="{{ route('dashboard') }}"
                 class="{{ request()->routeIs('dashboard') ? 'active' : '' }}"
@@ -625,8 +625,8 @@
             </a>
 
 
-            {{-- Data Meja --}}
-            @if(in_array(auth()->user()->role, ['kasir', 'manager']))
+            {{-- Data Meja (Hanya Kasir) --}}
+            @if(auth()->user()->role === 'kasir')
 
                 <a
                     href="{{ route('mejas.index') }}"
@@ -637,24 +637,29 @@
                 </a>
 
             @endif
-
-
-            {{-- Transaksi --}}
-            @if(in_array(auth()->user()->role, ['kasir', 'staff_dapur', 'manager']))
+{{-- Data Menu (Hanya Kasir) --}}
+@if(auth()->user()->role === 'kasir')
+    <a href="{{ route('menus.index') }}" class="{{ request()->routeIs('menus.*') ? 'active' : '' }}">
+        <i class="bi bi-journal-text"></i>
+        <span>Data Menu</span>
+    </a>
+@endif
+            {{-- Pemesanan (Kasir & Staff Dapur) --}}
+            @if(in_array(auth()->user()->role, ['kasir', 'staff_dapur']))
 
                 <a
-                    href="{{ route('transaksis.index') }}"
-                    class="{{ request()->routeIs('transaksis.*') ? 'active' : '' }}"
+                    href="{{ route('pemesanans.index') }}"
+                    class="{{ request()->routeIs('pemesanans.*') ? 'active' : '' }}"
                 >
                     <i class="bi bi-receipt-cutoff"></i>
-                    <span>Transaksi</span>
+                    <span>Pemesanan</span>
                 </a>
 
             @endif
 
 
-            {{-- Reservasi --}}
-            @if(in_array(auth()->user()->role, ['kasir', 'manager']))
+            {{-- Reservasi (Hanya Kasir) --}}
+            @if(auth()->user()->role === 'kasir')
 
                 <a
                     href="{{ route('reservasis.index') }}"
@@ -667,7 +672,7 @@
             @endif
 
 
-            {{-- Laporan --}}
+            {{-- Laporan (Khusus Manager) --}}
             @if(auth()->user()->role === 'manager')
 
                 <a
@@ -808,7 +813,7 @@
         <div class="row g-3">
 
 
-            {{-- JUMLAH MEJA --}}
+            {{-- RINGKASAN DATA MEJA (Kasir & Manager) --}}
             @if(in_array(auth()->user()->role, ['kasir', 'manager']))
 
                 <div class="col-12 col-sm-6 col-xl-3">
@@ -940,11 +945,11 @@
                         </div>
 
                         <div class="stat-number">
-                            {{ \App\Models\Transaksi::count() }}
+                            {{ \App\Models\Pemesanan::count() }}
                         </div>
 
                         <div class="stat-label">
-                            Total Transaksi
+                            Total Pemesanan
                         </div>
 
                     </div>
@@ -967,11 +972,11 @@
                         </div>
 
                         <div class="stat-number">
-                            {{ \App\Models\Transaksi::where('status', 'pending')->count() }}
+                            {{ \App\Models\Pemesanan::where('status', 'pending')->count() }}
                         </div>
 
                         <div class="stat-label">
-                            Transaksi Pending
+                            Pemesanan Pending
                         </div>
 
                     </div>
@@ -1002,8 +1007,8 @@
             <div class="row g-3">
 
 
-                {{-- DATA MEJA --}}
-                @if(in_array(auth()->user()->role, ['kasir', 'manager']))
+                {{-- DATA MEJA (Hanya Kasir) --}}
+                @if(auth()->user()->role === 'kasir')
 
                     <div class="col-12 col-md-6 col-xl-4">
 
@@ -1043,13 +1048,13 @@
                 @endif
 
 
-                {{-- TRANSAKSI --}}
-                @if(in_array(auth()->user()->role, ['kasir', 'staff_dapur', 'manager']))
+                {{-- PEMESANAN (Kasir & Staff Dapur) --}}
+                @if(in_array(auth()->user()->role, ['kasir', 'staff_dapur']))
 
                     <div class="col-12 col-md-6 col-xl-4">
 
                         <a
-                            href="{{ route('transaksis.index') }}"
+                            href="{{ route('pemesanans.index') }}"
                             class="quick-card"
                         >
 
@@ -1062,11 +1067,11 @@
                             <div class="quick-info">
 
                                 <strong>
-                                    Transaksi
+                                    Pemesanan
                                 </strong>
 
                                 <span>
-                                    Kelola transaksi cafe
+                                    Kelola pemesanan cafe
                                 </span>
 
                             </div>
@@ -1084,8 +1089,8 @@
                 @endif
 
 
-                {{-- RESERVASI --}}
-                @if(in_array(auth()->user()->role, ['kasir', 'manager']))
+                {{-- RESERVASI (Hanya Kasir) --}}
+                @if(auth()->user()->role === 'kasir')
 
                     <div class="col-12 col-md-6 col-xl-4">
 
@@ -1125,7 +1130,7 @@
                 @endif
 
 
-                {{-- LAPORAN --}}
+                {{-- LAPORAN (Khusus Manager) --}}
                 @if(auth()->user()->role === 'manager')
 
                     <div class="col-12 col-md-6 col-xl-4">

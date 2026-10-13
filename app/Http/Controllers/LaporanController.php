@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Transaksi;
+use App\Models\Pemesanan;
 use App\Models\Reservasi;
 use Illuminate\Http\Request;
 
@@ -15,34 +15,34 @@ class LaporanController extends Controller
         $tanggalSelesai = $request->tanggal_selesai;
 
         // =========================
-        // LAPORAN TRANSAKSI
+        // LAPORAN PEMESANAN
         // =========================
-        $transaksiQuery = Transaksi::with(['user', 'meja'])
-            ->orderBy('tanggal_transaksi', 'desc');
+        $pemesananQuery = Pemesanan::with(['user', 'meja'])
+            ->orderBy('created_at', 'desc');
 
         if ($tanggalMulai) {
-            $transaksiQuery->whereDate(
-                'tanggal_transaksi',
+            $pemesananQuery->whereDate(
+                'created_at',
                 '>=',
                 $tanggalMulai
             );
         }
 
         if ($tanggalSelesai) {
-            $transaksiQuery->whereDate(
-                'tanggal_transaksi',
+            $pemesananQuery->whereDate(
+                'created_at',
                 '<=',
                 $tanggalSelesai
             );
         }
 
-        $transaksis = $transaksiQuery->get();
+        $pemesanans = $pemesananQuery->get();
 
-        // Total transaksi
-        $jumlahTransaksi = $transaksis->count();
+        // Total pemesanan
+        $jumlahPemesanan = $pemesanans->count();
 
         // Total pendapatan
-        $totalPendapatan = $transaksis
+        $totalPendapatan = $pemesanans
             ->where('status', 'selesai')
             ->sum('total_bayar');
 
@@ -81,9 +81,9 @@ class LaporanController extends Controller
             ->count();
 
         return view('laporan.index', compact(
-            'transaksis',
+            'pemesanans',
             'reservasis',
-            'jumlahTransaksi',
+            'jumlahPemesanan',
             'totalPendapatan',
             'jumlahReservasi',
             'reservasiSelesai',

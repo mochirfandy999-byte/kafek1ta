@@ -503,51 +503,51 @@
 
         <div class="sidebar-menu">
 
-            <a href="{{ route('dashboard') }}">
-                <i class="bi bi-grid-1x2-fill"></i>
-                <span>Dashboard</span>
-            </a>
+    {{-- Dashboard --}}
+    <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+        <i class="bi bi-grid-1x2-fill"></i>
+        <span>Dashboard</span>
+    </a>
 
-            @if(in_array(auth()->user()->role, ['kasir', 'manager']))
+    {{-- Data Meja --}}
+    @if(auth()->user()->role === 'kasir')
+        <a href="{{ route('mejas.index') }}" class="{{ request()->routeIs('mejas.*') ? 'active' : '' }}">
+            <i class="bi bi-grid-3x3-gap-fill"></i>
+            <span>Data Meja</span>
+        </a>
+    @endif
+{{-- Data Menu (Hanya Kasir) --}}
+@if(auth()->user()->role === 'kasir')
+    <a href="{{ route('menus.index') }}" class="{{ request()->routeIs('menus.*') ? 'active' : '' }}">
+        <i class="bi bi-journal-text"></i>
+        <span>Data Menu</span>
+    </a>
+@endif
+    {{-- Pemesanan --}}
+    @if(in_array(auth()->user()->role, ['kasir', 'staff_dapur']))
+        <a href="{{ route('pemesanans.index') }}" class="{{ request()->routeIs('pemesanans.*') ? 'active' : '' }}">
+            <i class="bi bi-receipt-cutoff"></i>
+            <span>Pemesanan</span>
+        </a>
+    @endif
 
-                <a
-                    href="{{ route('mejas.index') }}"
-                    class="active"
-                >
-                    <i class="bi bi-grid-3x3-gap-fill"></i>
-                    <span>Data Meja</span>
-                </a>
+    {{-- Reservasi --}}
+    @if(auth()->user()->role === 'kasir')
+        <a href="{{ route('reservasis.index') }}" class="{{ request()->routeIs('reservasis.*') ? 'active' : '' }}">
+            <i class="bi bi-calendar-check-fill"></i>
+            <span>Reservasi</span>
+        </a>
+    @endif
 
-            @endif
+    {{-- Laporan --}}
+    @if(auth()->user()->role === 'manager')
+        <a href="{{ route('laporan.index') }}" class="{{ request()->routeIs('laporan.*') ? 'active' : '' }}">
+            <i class="bi bi-bar-chart-fill"></i>
+            <span>Laporan</span>
+        </a>
+    @endif
 
-            @if(in_array(auth()->user()->role, ['kasir', 'staff_dapur', 'manager']))
-
-                <a href="{{ route('transaksis.index') }}">
-                    <i class="bi bi-receipt-cutoff"></i>
-                    <span>Transaksi</span>
-                </a>
-
-            @endif
-
-            @if(in_array(auth()->user()->role, ['kasir', 'manager']))
-
-                <a href="{{ route('reservasis.index') }}">
-                    <i class="bi bi-calendar-check-fill"></i>
-                    <span>Reservasi</span>
-                </a>
-
-            @endif
-
-            @if(auth()->user()->role === 'manager')
-
-                <a href="{{ route('laporan.index') }}">
-                    <i class="bi bi-bar-chart-fill"></i>
-                    <span>Laporan</span>
-                </a>
-
-            @endif
-
-        </div>
+</div>
 
         <div class="logout-menu">
 

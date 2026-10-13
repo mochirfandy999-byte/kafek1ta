@@ -4,9 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MejaController;
-use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\ReservasiController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\MenuController;
 
 
 /*
@@ -47,12 +48,9 @@ Route::middleware('ceklogin')->group(function () {
 
 
     /*
-    |--------------------------------------------------------------------------
-    | DATA MEJA
-    |--------------------------------------------------------------------------
+        | DATA MEJA
     | Hanya Kasir dan Manager
-    |--------------------------------------------------------------------------
-    */
+       */
 
     Route::middleware('role:kasir,manager')->group(function () {
 
@@ -60,6 +58,12 @@ Route::middleware('ceklogin')->group(function () {
 
     });
 
+ /// DATA MEJA///
+
+Route::middleware(['auth'])->group(function () {
+    // Route resource menu
+    Route::resource('menus', MenuController::class);
+});
 
     /*
     |--------------------------------------------------------------------------
@@ -71,7 +75,7 @@ Route::middleware('ceklogin')->group(function () {
 
     Route::middleware('role:kasir,staff_dapur,manager')->group(function () {
 
-        Route::resource('transaksis', TransaksiController::class);
+        Route::resource('pemesanans', PemesananController::class);
 
     });
 

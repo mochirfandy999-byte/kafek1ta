@@ -94,18 +94,13 @@
                         <option value="">-- Pilih Status --</option>
 
                         <option value="tersedia"
-                            {{ old('status') == 'tersedia' ? 'selected' : '' }}>
+                            {{ old('status') == 'Reservasi' ? 'selected' : '' }}>
                             Tersedia
                         </option>
 
                         <option value="terisi"
-                            {{ old('status') == 'terisi' ? 'selected' : '' }}>
-                            Terisi
-                        </option>
-
-                        <option value="reservasi"
-                            {{ old('status') == 'reservasi' ? 'selected' : '' }}>
-                            Reservasi
+                            {{ old('status') == 'Dine in' ? 'selected' : '' }}>
+                            Dine in 
                         </option>
 
                     </select>

@@ -105,11 +105,17 @@
                 </a>
             </li>
         @endif
-
+{{-- Data Menu (TAMBAHKAN DI SINI - Hanya Kasir) --}}
+    @if(auth()->user()->role === 'kasir')
+        <a href="{{ route('menus.index') }}" class="{{ request()->routeIs('menus.*') ? 'active' : '' }}">
+            <i class="bi bi-journal-text"></i>
+            <span>Data Menu</span>
+        </a>
+    @endif
         @if(in_array(auth()->user()->role,['kasir','staff_dapur','manager']))
             <li>
-                <a href="{{ route('transaksis.index') }}" class="{{ request()->routeIs('transaksis.*') ? 'active' : '' }}">
-                    <i class="bi bi-receipt-cutoff"></i><span>Transaksi</span>
+                <a href="{{ route('pemesanans.index') }}" class="{{ request()->routeIs('Pemesanans.*') ? 'active' : '' }}">
+                    <i class="bi bi-receipt-cutoff"></i><span>Pemesanan</span>
                 </a>
             </li>
         @endif

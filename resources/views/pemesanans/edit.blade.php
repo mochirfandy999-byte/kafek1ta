@@ -8,7 +8,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>Edit Transaksi - CafeKita</title>
+    <title>Edit Pemesanan - CafeKita</title>
 
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
@@ -25,7 +25,7 @@
         <div class="card-header bg-warning">
 
             <h4 class="mb-0">
-                Edit Transaksi
+                Edit Pemesanan
             </h4>
 
         </div>
@@ -52,7 +52,7 @@
 
 
             <form
-                action="{{ route('transaksis.update', $transaksi->id) }}"
+                action="{{ route('pemesanans.update', $pemesanan->id) }}"
                 method="POST">
 
                 @csrf
@@ -62,13 +62,13 @@
                 <div class="mb-3">
 
                     <label class="form-label">
-                        Nomor Transaksi
+                        Nomor Pemesanan
                     </label>
 
                     <input
                         type="text"
                         class="form-control"
-                        value="{{ $transaksi->nomor_transaksi }}"
+                        value="{{ $pemesanan->nomor_transaksi }}"
                         readonly>
 
                 </div>
@@ -84,7 +84,7 @@
                         type="text"
                         name="nama_pelanggan"
                         class="form-control"
-                        value="{{ old('nama_pelanggan', $transaksi->nama_pelanggan) }}"
+                        value="{{ old('nama_pelanggan', $pemesanan->nama_pelanggan) }}"
                         required>
 
                 </div>
@@ -104,9 +104,9 @@
 
                             <option
                                 value="{{ $meja->id }}"
-                                {{ old('meja_id', $transaksi->meja_id) == $meja->id ? 'selected' : '' }}>
+                                {{ old('meja_id', $pemesanan->meja_id) == $meja->id ? 'selected' : '' }}>
 
-                                {{ $meja->nomor_meja }}
+                                Meja {{ $meja->nomor_meja }}
 
                             </option>
 
@@ -127,7 +127,7 @@
                         type="number"
                         name="total_bayar"
                         class="form-control"
-                        value="{{ old('total_bayar', $transaksi->total_bayar) }}"
+                        value="{{ old('total_bayar', $pemesanan->total_bayar) }}"
                         min="0"
                         step="100"
                         required>
@@ -145,17 +145,17 @@
                             class="form-select">
 
                         <option value="pending"
-                            {{ $transaksi->status === 'pending' ? 'selected' : '' }}>
+                            {{ $pemesanan->status === 'pending' ? 'selected' : '' }}>
                             Pending
                         </option>
 
                         <option value="selesai"
-                            {{ $transaksi->status === 'selesai' ? 'selected' : '' }}>
+                            {{ $pemesanan->status === 'selesai' ? 'selected' : '' }}>
                             Selesai
                         </option>
 
                         <option value="batal"
-                            {{ $transaksi->status === 'batal' ? 'selected' : '' }}>
+                            {{ $pemesanan->status === 'batal' ? 'selected' : '' }}>
                             Batal
                         </option>
 
@@ -166,7 +166,7 @@
 
                 <div class="d-flex gap-2">
 
-                    <a href="{{ route('transaksis.index') }}"
+                    <a href="{{ route('pemesanans.index') }}"
                        class="btn btn-secondary">
                         Kembali
                     </a>
