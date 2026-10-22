@@ -306,6 +306,28 @@
             font-size: 13px;
         }
 
+        .total-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--hijau-muda);
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(48, 78, 58, 0.15);
+        }
+
+        .total-title {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--hijau);
+        }
+
+        .total-amount {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--hijau);
+        }
+
         @media(max-width: 991px) {
             .sidebar {
                 width: 210px;
@@ -333,7 +355,8 @@
         }
     </style>
 </head>
-<body>
+<body class="app-with-sidebar">
+    @include('layouts.sidebar')
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
@@ -500,6 +523,113 @@
                                 </div>
                             </div>
 
+                            <!-- DAFTAR PILIH MENU -->
+                            <div class="col-12">
+                                <hr class="my-2 text-muted">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <label class="form-label mb-0 fs-6">Daftar Menu Pesanan <span class="required">*</span></label>
+                                    <button type="button" class="btn btn-sm btn-outline-success" id="btn-tambah-menu">
+                                        <i class="bi bi-plus-circle me-1"></i> Tambah Menu
+                                    </button>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-bordered order-table align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th style="min-width: 240px;">Menu</th>
+                                                <th style="width: 170px;">Harga Satuan</th>
+                                                <th style="width: 110px;">Jumlah</th>
+                                                <th style="width: 180px;">Subtotal</th>
+                                                <th style="width: 50px;" class="text-center">#</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="menu-container">
+                                            <tr class="item-baris">
+                                                <td>
+                                                    <select name="menu_id[]" class="form-select select-menu" required>
+                                                        <option value="" data-harga="0">-- Pilih Menu --</option>
+                                                        @if(isset($menus))
+                                                            @foreach ($menus as $menu)
+                                                                <option value="{{ $menu->id }}" data-harga="{{ $menu->harga }}">
+                                                                    {{ $menu->nama_menu ?? $menu->nama }} (Rp {{ number_format($menu->harga, 0, ',', '.') }})
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control bg-light harga-tampil" value="Rp 0" readonly>
+                                                </td>
+                                                <td>
+                                                    <input type="number" name="jumlah[]" class="form-control input-qty" value="1" min="1" required>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control bg-light fw-semibold subtotal-tampil" value="Rp 0" readonly>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-outline-danger btn-sm btn-hapus" title="Hapus baris">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Ringkasan Total Bayar -->
+                                <div class="total-box mt-2">
+                                    <span class="total-title">Total Pembayaran:</span>
+                                    <div>
+                                        <span class="total-amount" id="total-bayar-text">Rp 0</span>
+                                        <input type="hidden" name="total_bayar" id="total-bayar-hidden" value="0">
+                                    </div>
+                                </div>
+                            </div>
+
+<!-- Pilihan Metode Pembayaran -->
+<div class="card mb-3 p-3 border-0 shadow-sm mt-3">
+    <label class="form-label fw-bold">Metode Pembayaran <span class="text-danger">*</span></label>
+    <div class="d-flex gap-4 mb-3">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="metode_pembayaran" id="metode_tunai" value="tunai" checked>
+            <label class="form-check-label fw-semibold" for="metode_tunai">
+                💵 Tunai (Cash)
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="metode_pembayaran" id="metode_qris" value="qris">
+            <label class="form-check-label fw-semibold" for="metode_qris">
+                📱 QRIS (Non-Tunai)
+            </label>
+        </div>
+    </div>
+
+    <!-- Area Pembayaran Tunai -->
+    <div id="section-tunai" class="row g-3">
+        <div class="col-md-6">
+            <label for="uang_dibayar" class="form-label">Uang Diterima (Rp)</label>
+            <input type="number" class="form-control" id="uang_dibayar" name="uang_dibayar" placeholder="Contoh: 50000" min="0">
+        </div>
+        <div class="col-md-6">
+            <label for="kembalian" class="form-label">Kembalian (Rp)</label>
+            <input type="text" class="form-control bg-light" id="kembalian" name="kembalian" value="Rp 0" readonly>
+            <small id="pesan-kurang" class="text-danger d-none">Uang yang dibayarkan masih kurang!</small>
+        </div>
+    </div>
+
+    <!-- Area Pembayaran QRIS -->
+    <div id="section-qris" class="d-none alert alert-info mb-0">
+        <div class="d-flex align-items-center">
+            <div class="me-3 fs-3">📲</div>
+            <div>
+                <strong>Pembayaran QRIS:</strong> Silakan scan QR code kasir sebesar nominal pas: 
+                <span class="badge bg-primary fs-6" id="qris-nominal">Rp 0</span>
+            </div>
+        </div>
+    </div>
+</div>
+
                             <!-- Tombol Aksi -->
                             <div class="col-12 text-end pt-3">
                                 <a href="{{ route('pemesanans.index') }}" class="btn-back me-2">Batal</a>
@@ -515,5 +645,160 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script Perhitungan Otomatis & Penambahan Menu -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuContainer = document.getElementById('menu-container');
+            const btnTambahMenu = document.getElementById('btn-tambah-menu');
+            const totalBayarText = document.getElementById('total-bayar-text');
+            const totalBayarHidden = document.getElementById('total-bayar-hidden');
+
+            function formatRupiah(angka) {
+                return 'Rp ' + Number(angka).toLocaleString('id-ID');
+            }
+
+            function hitungTotal() {
+                let totalSemua = 0;
+                const barisItems = menuContainer.querySelectorAll('.item-baris');
+
+                barisItems.forEach(baris => {
+                    const selectMenu = baris.querySelector('.select-menu');
+                    const inputQty = baris.querySelector('.input-qty');
+                    const hargaTampil = baris.querySelector('.harga-tampil');
+                    const subtotalTampil = baris.querySelector('.subtotal-tampil');
+
+                    const selectedOption = selectMenu.options[selectMenu.selectedIndex];
+                    const harga = selectedOption ? (parseFloat(selectedOption.getAttribute('data-harga')) || 0) : 0;
+                    const qty = parseInt(inputQty.value) || 0;
+
+                    const subtotal = harga * qty;
+                    totalSemua += subtotal;
+
+                    hargaTampil.value = formatRupiah(harga);
+                    subtotalTampil.value = formatRupiah(subtotal);
+                });
+
+                totalBayarText.innerText = formatRupiah(totalSemua);
+                totalBayarHidden.value = totalSemua;
+            }
+
+            menuContainer.addEventListener('change', function (e) {
+                if (e.target.classList.contains('select-menu')) {
+                    hitungTotal();
+                }
+            });
+
+            menuContainer.addEventListener('input', function (e) {
+                if (e.target.classList.contains('input-qty')) {
+                    if (e.target.value < 1 && e.target.value !== '') e.target.value = 1;
+                    hitungTotal();
+                }
+            });
+
+            menuContainer.addEventListener('click', function (e) {
+                const btnHapus = e.target.closest('.btn-hapus');
+                if (btnHapus) {
+                    const baris = btnHapus.closest('.item-baris');
+                    if (menuContainer.querySelectorAll('.item-baris').length > 1) {
+                        baris.remove();
+                        hitungTotal();
+                    } else {
+                        alert('Minimal harus ada 1 baris menu!');
+                    }
+                }
+            });
+
+            btnTambahMenu.addEventListener('click', function () {
+                const barisPertama = menuContainer.querySelector('.item-baris');
+                const barisBaru = barisPertama.cloneNode(true);
+
+                barisBaru.querySelector('.select-menu').selectedIndex = 0;
+                barisBaru.querySelector('.harga-tampil').value = 'Rp 0';
+                barisBaru.querySelector('.input-qty').value = 1;
+                barisBaru.querySelector('.subtotal-tampil').value = 'Rp 0';
+
+                menuContainer.appendChild(barisBaru);
+            });
+
+            hitungTotal();
+        });
+        
+        document.addEventListener("DOMContentLoaded", function () {
+    const radioTunai = document.getElementById("metode_tunai");
+    const radioQris = document.getElementById("metode_qris");
+    const sectionTunai = document.getElementById("section-tunai");
+    const sectionQris = document.getElementById("section-qris");
+    const inputUangDibayar = document.getElementById("uang_dibayar");
+    const inputKembalian = document.getElementById("kembalian");
+    const pesanKurang = document.getElementById("pesan-kurang");
+    const labelQrisNominal = document.getElementById("qris-nominal");
+
+    // Fungsi membaca nilai Total Pembayaran saat ini
+    function getTotalBelanja() {
+    const totalElem = document.getElementById("total-bayar-text");
+    if (totalElem) {
+        // Ambil hanya digit angka dari teksnya
+        const angka = totalElem.innerText.replace(/[^0-9]/g, "");
+        return parseInt(angka, 10) || 0;
+    }
+    return 0;
+}
+
+    // Fungsi format rupiah
+    function formatRupiah(angka) {
+        return "Rp " + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    // Toggle tampilan saat metode pembayaran berganti
+    function switchMetode() {
+        const total = getTotalBelanja();
+        if (radioTunai.checked) {
+            sectionTunai.classList.remove("d-none");
+            sectionQris.classList.add("d-none");
+            hitungKembalian();
+        } else {
+            sectionTunai.classList.add("d-none");
+            sectionQris.classList.remove("d-none");
+            labelQrisNominal.innerText = formatRupiah(total);
+        }
+    }
+
+    // Logika hitung kembalian otomatis
+    function hitungKembalian() {
+        const total = getTotalBelanja();
+        const bayar = parseFloat(inputUangDibayar.value) || 0;
+        const selisih = bayar - total;
+
+        if (bayar === 0) {
+            inputKembalian.value = "Rp 0";
+            pesanKurang.classList.add("d-none");
+        } else if (selisih >= 0) {
+            inputKembalian.value = formatRupiah(selisih);
+            pesanKurang.classList.add("d-none");
+        } else {
+            inputKembalian.value = "- " + formatRupiah(Math.abs(selisih));
+            pesanKurang.classList.remove("d-none");
+        }
+    }
+
+    radioTunai.addEventListener("change", switchMetode);
+    radioQris.addEventListener("change", switchMetode);
+    inputUangDibayar.addEventListener("input", hitungKembalian);
+
+    // Panggil ulang jika ada penambahan/perubahan menu makanan
+    document.addEventListener("input", function(e) {
+        if (e.target.matches(".jumlah-menu, .select-menu, input[type='number']")) {
+            setTimeout(() => {
+                if (radioQris.checked) {
+                    labelQrisNominal.innerText = formatRupiah(getTotalBelanja());
+                } else {
+                    hitungKembalian();
+                }
+            }, 100);
+        }
+    });
+});
+    </script>
 </body>
 </html>

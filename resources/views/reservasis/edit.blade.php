@@ -13,10 +13,12 @@
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 </head>
 
-<body class="bg-light">
+<body class="bg-light app-with-sidebar">
+@include('layouts.sidebar')
 
 <div class="container py-4">
 
@@ -25,7 +27,7 @@
         <div class="card-body p-4">
 
             <h3 class="fw-bold mb-4">
-                ✏️ Edit Reservasi
+                 Edit Reservasi
             </h3>
 
 
@@ -265,7 +267,7 @@
                     <button type="submit"
                             class="btn btn-warning">
 
-                        💾 Update Reservasi
+                         Update Reservasi
 
                     </button>
 

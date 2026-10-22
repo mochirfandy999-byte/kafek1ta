@@ -423,7 +423,7 @@
             <div class="login-header">
 
                 <h2>
-                    Selamat Datang 👋
+                    Selamat Datang 
                 </h2>
 
                 <p>

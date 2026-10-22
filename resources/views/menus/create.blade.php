@@ -152,7 +152,8 @@
     </style>
 </head>
 
-<body>
+<body class="app-with-sidebar">
+    @include('layouts.sidebar')
 
     <div class="main-container">
 
@@ -211,15 +212,46 @@
                         <label class="form-label">
                             <i class="bi bi-card-heading me-1 text-muted"></i> Nama Menu
                         </label>
-                        <input type="text"
-                               name="nama_menu"
-                               class="form-control"
-                               placeholder="Masukkan nama menu (cth: Kopi Susu, Kentang Goreng)"
-                               value="{{ old('nama_menu') }}"
-                               required>
+                        <select name="nama_menu" class="form-select" required>
+                            <option value="">-- Pilih Nama Menu --</option>
+                            
+                            <optgroup label="Minuman">
+                                <option value="Matcha" {{ old('nama_menu') == 'Matcha' ? 'selected' : '' }}>Matcha</option>
+                                <option value="Coklat" {{ old('nama_menu') == 'Coklat' ? 'selected' : '' }}>Coklat</option>
+                                <option value="Soda strawberry" {{ old('nama_menu') == 'Soda strawberry' ? 'selected' : '' }}>Soda strawberry</option>
+                                <option value="Soda lecy" {{ old('nama_menu') == 'Soda lecy' ? 'selected' : '' }}>Soda lecy</option>
+                                <option value="Jus apel" {{ old('nama_menu') == 'Jus apel' ? 'selected' : '' }}>Jus apel</option>
+                                <option value="Jus jeruk" {{ old('nama_menu') == 'Jus jeruk' ? 'selected' : '' }}>Jus jeruk</option>
+                                <option value="Lemon tea" {{ old('nama_menu') == 'Lemon tea' ? 'selected' : '' }}>Lemon tea</option>
+                                <option value="Yuzu" {{ old('nama_menu') == 'Yuzu' ? 'selected' : '' }}>Yuzu</option>
+                                <option value="Espresso" {{ old('nama_menu') == 'Espresso' ? 'selected' : '' }}>Espresso</option>
+                                <option value="Long black" {{ old('nama_menu') == 'Long black' ? 'selected' : '' }}>Long black</option>
+                            </optgroup>
+
+                            <optgroup label="Makanan">
+                                <option value="Tahu walik" {{ old('nama_menu') == 'Tahu walik' ? 'selected' : '' }}>Tahu walik</option>
+                                <option value="Kentang goreng" {{ old('nama_menu') == 'Kentang goreng' ? 'selected' : '' }}>Kentang goreng</option>
+                                <option value="Siomay" {{ old('nama_menu') == 'Siomay' ? 'selected' : '' }}>Siomay</option>
+                                <option value="Dimsum" {{ old('nama_menu') == 'Dimsum' ? 'selected' : '' }}>Dimsum</option>
+                                <option value="Mix platter" {{ old('nama_menu') == 'Mix platter' ? 'selected' : '' }}>Mix platter</option>
+                            </optgroup>
+                        </select>
                     </div>
 
-                    <div class="col-12">
+                    {{-- Kolom Baru: Varian (Ice/Hot) --}}
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="bi bi-thermometer-half me-1 text-muted"></i> Varian (Opsional)
+                        </label>
+                        <select name="varian" class="form-select">
+                            <option value="">-- Tidak Ada Varian --</option>
+                            <option value="Ice" {{ old('varian') == 'Ice' ? 'selected' : '' }}>Ice (Dingin)</option>
+                            <option value="Hot" {{ old('varian') == 'Hot' ? 'selected' : '' }}>Hot (Panas)</option>
+                        </select>
+                    </div>
+
+                    {{-- Kolom Harga Jual disesuaikan lebarnya --}}
+                    <div class="col-md-6">
                         <label class="form-label">
                             <i class="bi bi-cash-stack me-1 text-muted"></i> Harga Jual
                         </label>
@@ -230,6 +262,7 @@
                                    class="form-control"
                                    placeholder="Contoh: 18000"
                                    min="0"
+                                   step="1"
                                    value="{{ old('harga') }}"
                                    required>
                         </div>

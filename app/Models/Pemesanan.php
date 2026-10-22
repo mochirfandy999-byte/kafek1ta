@@ -9,10 +9,11 @@ class Pemesanan extends Model
     protected $table = 'pemesanans';
 
     protected $fillable = [
-        'nomor_pemesanan',
+        'nomor_transaksi',
         'user_id',
         'meja_id',
         'nama_pelanggan',
+        'catatan',
         'tanggal_transaksi',
         'total_bayar',
         'status',
@@ -32,4 +33,15 @@ class Pemesanan extends Model
     {
         return $this->belongsTo(Meja::class);
     }
+
+    // Tambahkan relasi ke DetailPemesanan di bawah ini:
+    public function detailPemesanans()
+    {
+        return $this->hasMany(DetailPemesanan::class, 'pemesanan_id');
+    }
+
+    public function pembayaran()
+{
+    return $this->hasOne(\App\Models\Pembayaran::class);
+}
 }

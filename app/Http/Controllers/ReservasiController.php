@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Meja;
+use App\Models\Menu;
 use App\Models\Reservasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -25,15 +26,16 @@ class ReservasiController extends Controller
     /**
      * Form tambah reservasi
      */
-    public function create()
-    {
-        $mejas = Meja::where('status', 'tersedia')
-            ->orderBy('nomor_meja')
-            ->get();
+   public function create()
+{
+    $mejas = Meja::where('status', 'tersedia')
+        ->orderBy('nomor_meja')
+        ->get();
 
-        return view('reservasis.create', compact('mejas'));
-    }
+    $menus = Menu::orderBy('nama_menu')->get(); // <-- Ambil data menu
 
+    return view('reservasis.create', compact('mejas', 'menus'));
+}
     /**
      * Simpan reservasi
      */
