@@ -580,7 +580,8 @@
     </style>
 </head>
 
-<body>
+<body class="app-with-sidebar">
+    @include('layouts.sidebar')
 
     {{-- =====================================================
          SIDEBAR

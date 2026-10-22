@@ -22,7 +22,8 @@
         .badge-minuman { background: #e3f2fd; color: #1565c0; padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; }
     </style>
 </head>
-<body>
+<body class="app-with-sidebar">
+    @include('layouts.sidebar')
 
     <aside class="sidebar">
         <div class="sidebar-brand">

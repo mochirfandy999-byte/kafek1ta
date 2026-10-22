@@ -81,7 +81,8 @@
     </style>
 </head>
 
-<body>
+<body class="app-with-sidebar">
+    @include('layouts.sidebar')
 
 <div class="sidebar">
     <div class="brand">

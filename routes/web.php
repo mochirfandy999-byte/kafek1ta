@@ -4,30 +4,20 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MejaController;
-use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\ReservasiController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\MenuController;
-
+use App\Http\Controllers\PemesananController;
 
 /*
 |--------------------------------------------------------------------------
-| LOGIN
+| LOGIN & LOGOUT
 |--------------------------------------------------------------------------
 */
 
-// Halaman Login
-Route::get('/login', [AuthController::class, 'login'])
-    ->name('login');
-
-// Proses Login
-Route::post('/login', [AuthController::class, 'prosesLogin'])
-    ->name('proses.login');
-
-// Logout
-Route::post('/logout', [AuthController::class, 'logout'])
-    ->name('logout');
-
+Route::get('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/login', [AuthController::class, 'prosesLogin'])->name('proses.login');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 /*
 |--------------------------------------------------------------------------
@@ -37,81 +27,36 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 Route::middleware('ceklogin')->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | DASHBOARD
-    |--------------------------------------------------------------------------
-    */
+    /* DASHBOARD */
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->name('dashboard');
-
-
-    /*
-        | DATA MEJA
-    | Hanya Kasir dan Manager
-       */
-
+    /* DATA MEJA (Kasir & Manager) */
     Route::middleware('role:kasir,manager')->group(function () {
-
         Route::resource('mejas', MejaController::class);
-
     });
 
- /// DATA MEJA///
+    /* DATA MENU */
+    Route::middleware(['auth'])->group(function () {
+        Route::resource('menus', MenuController::class);
+    });
 
-Route::middleware(['auth'])->group(function () {
-    // Route resource menu
-    Route::resource('menus', MenuController::class);
-});
-
-    /*
-    |--------------------------------------------------------------------------
-    | TRANSAKSI
-    |--------------------------------------------------------------------------
-    | Kasir, Staff Dapur, dan Manager
-    |--------------------------------------------------------------------------
-    */
-
+    /* TRANSAKSI & PEMESANAN (Kasir, Staff Dapur, Manager) */
     Route::middleware('role:kasir,staff_dapur,manager')->group(function () {
-
+        Route::get('/pemesanans/{id}/nota', [PemesananController::class, 'nota'])->name('pemesanans.nota');
         Route::resource('pemesanans', PemesananController::class);
-
     });
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | RESERVASI
-    |--------------------------------------------------------------------------
-    | Hanya Kasir dan Manager
-    |--------------------------------------------------------------------------
-    */
-
+    /* RESERVASI (Kasir & Manager) */
     Route::middleware('role:kasir,manager')->group(function () {
-
         Route::resource('reservasis', ReservasiController::class);
-
     });
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | LAPORAN
-    |--------------------------------------------------------------------------
-    | Khusus Manager
-    |--------------------------------------------------------------------------
-    */
-
+    /* LAPORAN (Khusus Manager) */
     Route::middleware('role:manager')->group(function () {
-
-        Route::get('/laporan', [LaporanController::class, 'index'])
-            ->name('laporan.index');
-
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     });
 
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -120,7 +65,5 @@ Route::middleware(['auth'])->group(function () {
 */
 
 Route::get('/', function () {
-
     return redirect()->route('login');
-
 });
